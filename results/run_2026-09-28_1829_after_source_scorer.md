@@ -1,11 +1,11 @@
-# Run log — after
+# Run log — after_source_scorer
 
 - Produced by: `run_eval.py::main`
 - Retrieval: `store.py::search`, chunks from `chunker.py::split_documents`
 - Corpus: `campus_life` (index variant `default`)
 - top-k: 5 · relevance cutoff: 0.6
 - Runs per question: 3, caching off
-- When: 2026-09-28 18:21
+- When: 2026-09-28 18:29
 
 This table is one row per QUESTION. The run log your README asks for is
 one row per CRITERION, so aggregate these into it — criterion 1 is how many
@@ -51,7 +51,7 @@ output as text, not a description of it.
 - Sources retrieved: admin_add_drop_deadline.txt, admin_grade_appeals.txt, admin_pass_fail_option.txt, admin_withdrawal_deadline.txt, advising_registration.txt
 
 ```
-The deadline to drop a course is through the end of week six (*admin_add_drop_deadline.txt* and *admin_withdrawal_deadline.txt*).
+Dropping a course has a window through the end of week six (*admin_add_drop_deadline.txt* and *admin_withdrawal_deadline.txt*).
 ```
 
 ### What is the deadline to drop a course? — run 2
@@ -60,7 +60,7 @@ The deadline to drop a course is through the end of week six (*admin_add_drop_de
 - Sources retrieved: admin_add_drop_deadline.txt, admin_grade_appeals.txt, admin_pass_fail_option.txt, admin_withdrawal_deadline.txt, advising_registration.txt
 
 ```
-The deadline to drop a course is through the end of week six (*admin_add_drop_deadline.txt* and *admin_withdrawal_deadline.txt*).
+According to the document `admin_add_drop_deadline.txt`, dropping a course can be done through the end of week six.
 ```
 
 ### What is the deadline to drop a course? — run 3
@@ -69,7 +69,7 @@ The deadline to drop a course is through the end of week six (*admin_add_drop_de
 - Sources retrieved: admin_add_drop_deadline.txt, admin_grade_appeals.txt, admin_pass_fail_option.txt, admin_withdrawal_deadline.txt, advising_registration.txt
 
 ```
-The deadline to drop a course is through the end of week six (*admin_add_drop_deadline.txt* and *admin_withdrawal_deadline.txt*).
+Dropping a course has a window through the end of week six. (Source: admin_add_drop_deadline.txt and admin_withdrawal_deadline.txt)
 ```
 
 ### Which campus job earnings do not count against financial aid? — run 1
@@ -78,9 +78,7 @@ The deadline to drop a course is through the end of week six (*admin_add_drop_de
 - Sources retrieved: admin_campus_jobs_and_financial_aid.txt, admin_graduation_requirements.txt, admin_printing_quota.txt, admin_study_abroad.txt, money_jobs.txt
 
 ```
-Work-study earnings do not count against your financial aid. 
-
-Source: admin_campus_jobs_and_financial_aid.txt
+Work-study earnings do not count against your financial aid. This comes from `admin_campus_jobs_and_financial_aid.txt`.
 ```
 
 ### Which campus job earnings do not count against financial aid? — run 2
@@ -89,9 +87,7 @@ Source: admin_campus_jobs_and_financial_aid.txt
 - Sources retrieved: admin_campus_jobs_and_financial_aid.txt, admin_graduation_requirements.txt, admin_printing_quota.txt, admin_study_abroad.txt, money_jobs.txt
 
 ```
-Work-study earnings do not count against your financial aid the way ordinary income does. 
-
-Source: `admin_campus_jobs_and_financial_aid.txt`
+Work-study earnings do not count against your financial aid the way ordinary income does (admin_campus_jobs_and_financial_aid.txt).
 ```
 
 ### Which campus job earnings do not count against financial aid? — run 3
@@ -100,7 +96,7 @@ Source: `admin_campus_jobs_and_financial_aid.txt`
 - Sources retrieved: admin_campus_jobs_and_financial_aid.txt, admin_graduation_requirements.txt, admin_printing_quota.txt, admin_study_abroad.txt, money_jobs.txt
 
 ```
-Work-study earnings do not count against financial aid the way ordinary income does (*admin_campus_jobs_and_financial_aid.txt*).
+Work-study earnings do not count against your financial aid the way ordinary income does (admin_campus_jobs_and_financial_aid.txt).
 ```
 
 ### Are there any benefits to declaring my major early? — run 1
@@ -118,7 +114,7 @@ There is no advantage to declaring early except that it assigns you a department
 - Sources retrieved: admin_add_drop_deadline.txt, admin_declaring_a_major.txt, admin_pass_fail_option.txt, advising_registration.txt, course_biol_160_workload.txt
 
 ```
-There is no advantage to declaring early except that it assigns you a departmental adviser, who is generally more useful than the general one (admin_declaring_a_major.txt).
+According to `admin_declaring_a_major.txt`, there is no advantage to declaring early except that it assigns you a departmental adviser, who is generally more useful than the general one.
 ```
 
 ### Are there any benefits to declaring my major early? — run 3
@@ -127,7 +123,7 @@ There is no advantage to declaring early except that it assigns you a department
 - Sources retrieved: admin_add_drop_deadline.txt, admin_declaring_a_major.txt, admin_pass_fail_option.txt, advising_registration.txt, course_biol_160_workload.txt
 
 ```
-According to admin_declaring_a_major.txt, there is no advantage to declaring early except that it assigns you a departmental adviser, who is generally more useful than the general one.
+There is no advantage to declaring early except that it assigns you a departmental adviser, who is generally more useful than the general one (admin_declaring_a_major.txt).
 ```
 
 ### Can we roll over dining dollars to next semester? — run 1
@@ -136,10 +132,21 @@ According to admin_declaring_a_major.txt, there is no advantage to declaring ear
 - Sources retrieved: admin_dining_dollars.txt, admin_meal_plan_changes.txt, admin_printing_quota.txt, dining_verrill_street_grill.txt, money_jobs.txt
 
 ```
-Dining dollars roll over from the autumn semester to the spring semester, but they do not roll over from the spring semester to the following autumn semester, and whatever is left in May disappears (admin_dining_dollars.txt).
+Yes, dining dollars roll over from the autumn semester to the spring semester, but they do not roll over from the spring semester to the following autumn semester. 
+
+Source: admin_dining_dollars.txt
 ```
 
 ### Can we roll over dining dollars to next semester? — run 2
+
+- Best distance: 0.2558 (passed the gate)
+- Sources retrieved: admin_dining_dollars.txt, admin_meal_plan_changes.txt, admin_printing_quota.txt, dining_verrill_street_grill.txt, money_jobs.txt
+
+```
+Yes, dining dollars roll over from the autumn semester to the spring semester, but they do not roll over from the spring semester to the following autumn semester (admin_dining_dollars.txt).
+```
+
+### Can we roll over dining dollars to next semester? — run 3
 
 - Best distance: 0.2558 (passed the gate)
 - Sources retrieved: admin_dining_dollars.txt, admin_meal_plan_changes.txt, admin_printing_quota.txt, dining_verrill_street_grill.txt, money_jobs.txt
@@ -150,15 +157,6 @@ Yes, dining dollars roll over from the autumn semester to the spring semester, b
 Source: `admin_dining_dollars.txt`
 ```
 
-### Can we roll over dining dollars to next semester? — run 3
-
-- Best distance: 0.2558 (passed the gate)
-- Sources retrieved: admin_dining_dollars.txt, admin_meal_plan_changes.txt, admin_printing_quota.txt, dining_verrill_street_grill.txt, money_jobs.txt
-
-```
-Dining dollars roll over from the autumn semester to the spring, but they do not roll over from the spring to the following autumn, and whatever is left in May disappears. (Source: admin_dining_dollars.txt)
-```
-
 ### What is the deadline to appeal a grade? — run 1
 
 - Best distance: 0.1966 (passed the gate)
@@ -167,7 +165,7 @@ Dining dollars roll over from the autumn semester to the spring, but they do not
 ```
 A grade appeal must be raised within fifteen days of the grade posting. 
 
-Source: `admin_grade_appeals.txt`
+Source: admin_grade_appeals.txt
 ```
 
 ### What is the deadline to appeal a grade? — run 2

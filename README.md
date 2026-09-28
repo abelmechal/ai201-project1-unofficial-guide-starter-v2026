@@ -129,7 +129,8 @@ advance what counts as success. I used that explanation to understand why
 that an expected phrase like `Yes` was too vague and that longer expected
 phrases were too brittle, so I changed the expected phrases to stable key facts
 like `departmental adviser` and `roll over from the autumn semester to the
-spring`.
+spring`. For Unit 2, I also used AI to help turn criterion 5 into a stricter
+scorer check that requires the answer to cite a retrieved source.
 
 ---
 
@@ -216,24 +217,24 @@ Source: admin_dining_dollars.txt
 
 ## Diagnoses
 
-No criteria missed in the official before run. The main thing I would tighten
-next is the scorer: it currently checks whether a key phrase appears in the
-answer, but it does not automatically verify whether the cited source is the
-correct source. I judged criterion 5 manually from the run log.
+No criteria missed in the official before run. The main weakness I found was in
+the measurement, not in retrieval: the first scorer only checked whether the
+expected phrase appeared in the answer. That meant source citation still had to
+be judged manually from the run log.
 
 ## The Improvement
 
-**What I changed:** Before the official eval run, I made the expected phrases in
-`questions.py` shorter and more stable so the scorer checked the important fact
-instead of requiring one exact sentence.
+**What I changed:** I improved `scorer.py` so `judge(...)` now requires two
+things: the answer must contain the expected fact, and it must cite at least one
+of the retrieved source filenames.
 
-**Why I picked it:** Earlier trial runs showed correct answers being marked
-wrong because the model used different wording. Shorter expected phrases made
-the scorer measure correctness instead of sentence matching.
+**Why I picked it:** Criterion 5 cares about source correctness, but the earlier
+scorer only measured answer text. Adding a retrieved-source citation check makes
+the automated pass/fail result closer to what the criteria actually ask for.
 
 ### Run Log - After
 
-Run log file: `results/run_2026-09-28_1821_after.md`
+Run log file: `results/run_2026-09-28_1829_after_source_scorer.md`
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
@@ -245,20 +246,20 @@ Run log file: `results/run_2026-09-28_1821_after.md`
 
 **Did it help?**
 
-The system stayed at the same result: all five questions passed three times and
-all five out-of-corpus questions were refused. The expected-phrase cleanup made
-the eval stable before these official runs, but there was no additional miss to
-fix after the before log.
+The stricter scorer did not lower the score: all five questions still passed
+three times, and all five out-of-corpus questions were still refused. That tells
+me the answers were not only saying the right facts, but also naming retrieved
+source files consistently.
 
 ## What's Still Broken
 
 The system works for my current campus_life questions, but the scorer is still
-simple. It checks for expected phrases in the generated answer, so it would not
-catch every possible source-citation problem automatically.
+simple. It checks that the answer cites one of the retrieved files, but it does
+not prove that the cited file is the single best source for the answer.
 
 ## What I'd Do Differently
 
 I would write criterion 5 with an automatic scoring plan from the beginning,
-such as checking that the expected source filename appears in the answer. That
-would make source correctness easier to measure instead of relying on manual
-review of the run log.
+such as storing an expected source filename for each question. That would make
+source correctness easier to measure than checking whether the answer cites any
+retrieved source.
