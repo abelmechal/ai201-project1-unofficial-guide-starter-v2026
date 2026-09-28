@@ -1,19 +1,8 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+Name: ERC
 
-> **This file is your submission.** Fill it in as you go — most sections get
-> written during the milestone that produces them, not at the end.
->
-> How the starter works, and every command you'll need, is in `RUNNING.md`.
-> Leave that file alone.
->
-> **Paste everything as text.** No screenshots, no video. A typed table gets
-> full credit; a picture of the same table gets none.
->
-> Delete these instruction blocks as you replace them. The `<!-- -->` comments
-> are notes to you and don't show up when the page renders — you can leave them
-> or remove them.
+Corpus: `campus_life`
 
 ---
 
@@ -21,225 +10,255 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+This project is a RAG system over the `campus_life` corpus. It answers student
+questions about campus policies, dining, housing, course workload, and other
+practical college-life information. The system retrieves relevant chunks from
+the local corpus, refuses questions that are too far outside the corpus, and
+generates answers with source filenames so the user can check the answer.
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** 800 characters
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+**Overlap:** 120 characters
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
+I kept the starter chunking numbers because the campus_life documents are mostly
+short notes. In the sample chunks, each chunk usually contains one complete note
+or one complete section, so an 800-character chunk keeps the topic and the
+important detail together. The 120-character overlap gives some protection if a
+longer note crosses a chunk boundary, but most of this corpus is short enough
+that the fallback splitter keeps each note readable by itself.
 
 ## Sample Chunks
 
-<!-- Five chunks, pasted as text. Label each one and name the file it came from
-     AND the function that produced it — the grader checks your code against
-     what you claim here.
+**Chunk 1** - source: `admin_add_drop_deadline.txt#0` - produced by: `chunker.py::fallback_split`
 
-     `python app.py chunks -n 5` prints all three for you. Copy them straight
-     across.
+```text
+On the add/drop deadline
 
-     Milestone 3. -->
-
-**Chunk 1** — source: `` — produced by: ``
-
-```
+You can add a course through the end of the second week. Dropping is a longer window - through the end of week six - but a drop after week two shows as a W on your transcript. Nothing anywhere on the registrar's site says this plainly, and students find out from each other.
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** - source: `course_biol_160.txt#0` - produced by: `chunker.py::fallback_split`
 
-```
-```
+```text
+BIOL 160 Cell Biology
 
-**Chunk 3** — source: `` — produced by: ``
+I lived here my sophomore year. Format is lecture three times a week with a weekly lab. Assessment: four unit tests and a cumulative final. Not curved.
 
-```
-```
+Expect 9 to 11 hours a week, the heaviest first-year course by reputation.
 
-**Chunk 4** — source: `` — produced by: ``
-
-```
+The one piece of advice: the unit tests come fast, roughly every three weeks; falling behind once is very hard to recover from.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 3** - source: `course_hist_118_workload.txt#0` - produced by: `chunker.py::fallback_split`
 
+```text
+Workload for HIST 118 Modern World History
+
+People keep asking so: a lot of reading, about 120 pages a week, but no problem sets. That's real time, not optimistic time.
+
+It's front-loaded - the first month is heavier than the rest, partly because you're learning the format.
 ```
+
+**Chunk 4** - source: `dining_pellew_dining_hall_followup.txt#0` - produced by: `chunker.py::fallback_split`
+
+```text
+Re: Pellew Dining Hall
+
+Adding to what people have said about Pellew Dining Hall. The wait figure of 12 to 18 minutes at peak matches what I've seen. If you're trying to eat between classes, go before 11:45 and it's a different building entirely.
+
+Also worth saying: the furthest hall from anywhere, next to the athletics centre. Nobody tells you this at orientation.
+```
+
+**Chunk 5** - source: `housing_innisfree_hall.txt#0` - produced by: `chunker.py::fallback_split`
+
+```text
+Innisfree Hall - what it's actually like
+
+Transferred in last year, so take this with a grain of salt. Built 1991, renovated 2022. Rooms are doubles arranged as pairs sharing one bathroom between two rooms.
+
+The good: the shared-bathroom-between-two-rooms arrangement is the best compromise on campus.
+
+The bad: no air conditioning, which matters for the first three weeks of September.
+
+Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building is L-shaped and the short wing is much quieter.
 ```
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
-**Question:**
+**Question:** How late can I drop a course, and when will it appear as a W?
 
 **Answer:**
 
+```text
+(best distance 0.217, cutoff 0.6)
+
+You can drop a course through the end of week six. A drop shows as a W on your transcript if it occurs after week two. (Source: admin_add_drop_deadline.txt)
+
+Sources retrieved: admin_add_drop_deadline.txt, admin_declaring_a_major.txt, admin_grade_appeals.txt, admin_pass_fail_option.txt, admin_withdrawal_deadline.txt
 ```
-```
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.6
 
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+The covered questions all had best distances below 0.3. The out-of-corpus
+questions all had best distances above 0.8. Since there was a large gap between
+those groups, I kept the cutoff at 0.6.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What is the deadline to drop a course? | Yes | 0.2685 |
+| Which campus job earnings do not count against financial aid? | Yes | 0.2362 |
+| Are there any benefits to declaring my major early? | Yes | 0.2282 |
+| Can we roll over dining dollars to next semester? | Yes | 0.2558 |
+| What is the deadline to appeal a grade? | Yes | 0.1966 |
+| What is the capital of Mongolia? | No | 0.8246 |
+| How do I change the oil in a diesel engine? | No | 0.9340 |
+| Who won the 1994 World Cup? | No | 0.8859 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.8442 |
+| How do I write a for loop in Rust? | No | 0.8960 |
 
 ## How I Used AI
 
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
+**1.** I asked AI to explain the project after I missed the previous class. It
+explained that this project is about building a RAG pipeline and deciding in
+advance what counts as success. I used that explanation to understand why
+`questions.py`, `criteria.md`, and the result logs matter.
 
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
-
-**1.**
-
-**2.**
-
-<!-- ── Stretch features ─────────────────────────────────────────────────────
-     Doing one? Say so here BEFORE you start. A feature this README never
-     claims earns nothing.
-     ───────────────────────────────────────────────────────────────────────── -->
+**2.** I asked AI to help pressure-test my question and scorer setup. It noticed
+that an expected phrase like `Yes` was too vague and that longer expected
+phrases were too brittle, so I changed the expected phrases to stable key facts
+like `departmental adviser` and `roll over from the autumn semester to the
+spring`.
 
 ---
 
 # Unit 2
 
-<!-- These sections get ADDED to what's already above. Don't delete or rewrite
-     unit 1 — the point is that someone can see what you said before you knew
-     how it went. -->
+## Run Log - Before
 
-## Run Log — Before
+Run log file: `results/run_2026-09-28_1819_before.md`
 
-<!-- Your five criteria, three runs each. `python run_eval.py --label before`
-     runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
-     writes it all into results/ for you. Targets come from criteria.md; the
-     verdict column is your call.
+Produced by: `run_eval.py::main`
 
-     Criterion 3 is measured in one deterministic pass rather than three, so
-     the same number goes in all three run columns. That's correct, not lazy.
-
-     Milestone 1. -->
+Retrieval: `store.py::search`, chunks from `chunker.py::split_documents`
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 4. Chunks are usable by themselves | 4 of 5 sampled chunks | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 5. Answers cite the correct source | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+Real output from the run:
+
+```text
+What is the deadline to drop a course?
+  run 1: pass  (best distance 0.268)
+  run 2: pass  (best distance 0.268)
+  run 3: pass  (best distance 0.268)
+
+Which campus job earnings do not count against financial aid?
+  run 1: pass  (best distance 0.236)
+  run 2: pass  (best distance 0.236)
+  run 3: pass  (best distance 0.236)
+
+Are there any benefits to declaring my major early?
+  run 1: pass  (best distance 0.228)
+  run 2: pass  (best distance 0.228)
+  run 3: pass  (best distance 0.228)
+
+Can we roll over dining dollars to next semester?
+  run 1: pass  (best distance 0.256)
+  run 2: pass  (best distance 0.256)
+  run 3: pass  (best distance 0.256)
+
+What is the deadline to appeal a grade?
+  run 1: pass  (best distance 0.197)
+  run 2: pass  (best distance 0.197)
+  run 3: pass  (best distance 0.197)
+
+Out-of-scope questions (the gate should refuse these):
+  refused  (best distance 0.825)  What is the capital of Mongolia?
+  refused  (best distance 0.934)  How do I change the oil in a diesel engine?
+  refused  (best distance 0.886)  Who won the 1994 World Cup?
+  refused  (best distance 0.844)  What is the recommended dosage of ibuprofen for a headache?
+  refused  (best distance 0.896)  How do I write a for loop in Rust?
+  -> gate refused 5 of 5
+```
+
+Sample generated answers from the same run:
+
+```text
+Work-study earnings do not count against your financial aid the way ordinary income does (admin_campus_jobs_and_financial_aid.txt).
+```
+
+```text
+According to `admin_declaring_a_major.txt`, there is no advantage to declaring early except that it assigns you a departmental adviser, who is generally more useful than the general one.
+```
+
+```text
+Dining dollars roll over from the autumn semester to the spring, but they do not roll over from the spring to the following autumn.
+
+Source: admin_dining_dollars.txt
+```
 
 ## Verdicts
 
-<!-- MET or MISSED for each of the five, against the target you wrote last
-     unit — not a new one. Plus a sentence on how you decided. That sentence
-     matters most where it was close.
-
-     If your target said 4 of 5 and your runs came out 4, 3, 4, that's a MISS.
-     The target has to hold, not show up occasionally.
-
-     Milestone 2. -->
-
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunks contain the answer | MET | All five questions passed in all three runs, and each best result pointed to the document containing the answer. |
+| 2 | Every answer names a source | MET | Every generated answer in the run log included at least one source filename. |
+| 3 | The relevance gate stops out-of-corpus questions | MET | The gate refused 5 of 5 unrelated questions, which is above the 4 of 5 target. |
+| 4 | Chunks are usable by themselves | MET | The five sampled chunks read as complete notes or complete sections and included the topic plus useful detail. |
+| 5 | Answers cite the correct source | MET | The answers cited the files that actually contained the expected facts, such as `admin_dining_dollars.txt` and `admin_grade_appeals.txt`. |
 
 ## Diagnoses
 
-<!-- For each miss: which stage caused it, and how. The stage alone isn't
-     enough — you need the mechanism.
-
-     Not a diagnosis: "Question 3 didn't work."
-     A diagnosis:     "Question 3 asks about laundry costs. The answer is in
-                       one sentence that got split across two chunks, so
-                       neither chunk on its own contains it."
-
-     The five stages: loading → chunking → embedding → retrieval → generation.
-
-     Look for a pattern. If three misses all ask about numbers, that's one
-     problem, not three.
-
-     Missed nothing? Say so, then say honestly whether your targets were set
-     low, and which one you'd tighten and to what.
-
-     Milestone 3. -->
+No criteria missed in the official before run. The main thing I would tighten
+next is the scorer: it currently checks whether a key phrase appears in the
+answer, but it does not automatically verify whether the cited source is the
+correct source. I judged criterion 5 manually from the run log.
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** Before the official eval run, I made the expected phrases in
+`questions.py` shorter and more stable so the scorer checked the important fact
+instead of requiring one exact sentence.
 
-**Why I picked it:**
+**Why I picked it:** Earlier trial runs showed correct answers being marked
+wrong because the model used different wording. Shorter expected phrases made
+the scorer measure correctness instead of sentence matching.
 
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
+### Run Log - After
 
-### Run Log — After
-
-<!-- Same format, same five criteria, three runs each.
-     `python run_eval.py --label after` -->
+Run log file: `results/run_2026-09-28_1821_after.md`
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 4. Chunks are usable by themselves | 4 of 5 sampled chunks | 5 of 5 | 5 of 5 | 5 of 5 | MET |
+| 5. Answers cite the correct source | 4 of 5 | 5 of 5 | 5 of 5 | 5 of 5 | MET |
 
 **Did it help?**
 
-<!-- Say plainly whether it did, and how you know. If it made things worse,
-     say that — a change that backfired, honestly reported, earns full credit
-     and is more interesting than one that worked. What matters is that you can
-     tell.
-
-     Milestone 4. -->
+The system stayed at the same result: all five questions passed three times and
+all five out-of-corpus questions were refused. The expected-phrase cleanup made
+the eval stable before these official runs, but there was no additional miss to
+fix after the before log.
 
 ## What's Still Broken
 
-<!-- For each criterion still missed after your fix: what you'd do about it,
-     and why you stopped where you did.
-
-     "I ran out of time" is fine if it's true. Pretending nothing is left is
-     not.
-
-     Milestone 5. -->
+The system works for my current campus_life questions, but the scorer is still
+simple. It checks for expected phrases in the generated answer, so it would not
+catch every possible source-citation problem automatically.
 
 ## What I'd Do Differently
 
-<!-- Knowing what you know now — which of your five criteria would you write
-     differently, and why?
-
-     Milestone 5. -->
+I would write criterion 5 with an automatic scoring plan from the beginning,
+such as checking that the expected source filename appears in the answer. That
+would make source correctness easier to measure instead of relying on manual
+review of the run log.
